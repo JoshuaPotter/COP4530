@@ -64,7 +64,7 @@ int main() {
 			
 			// check if this is the first character
 			if(prevChar != '\0') {
-				// check if character is a digit or letter
+				// check if character is a digit or letter or symbol
 				if(c >= '0' && c <= '9') {
 					// character is a digit
 					
@@ -76,8 +76,10 @@ int main() {
 					
 					// add character to characters map
 					insertCharacter(characters, c);
+					// add letter to temporary word storage
 					word.push_back(c);
-				} else if (lower >= 'a' && lower <= 'z') {
+				} 
+				else if (lower >= 'a' && lower <= 'z') {
 					// character is a letter
 					
 					// check if previous character was a digit
@@ -88,11 +90,13 @@ int main() {
 					
 					// add character to character map
 					insertCharacter(characters, c);
+					// add letter to temporary word storage
 					word.push_back(lower);
-				} else {
+				} 
+				else {
 					// non-digit and non-letter character
 					if((prevChar >= '0' && prevChar <= '9')||(prevChar >= 'a' && prevChar <= 'z')) {
-						// character is alphanumeric
+						// previous character is alphanumeric, test for digit or letter
 						if(c >= '0' && c <= '9') {
 							// character is a digit
 
@@ -119,12 +123,13 @@ int main() {
 								// add word to words map
 								insertWord(words, word);
 							} else if (prevChar >= '0' && prevChar <= '9') {
+								// insert number to numbers map
 								insertNumber(numbers, word);
 							}
 						}
 					}
-						// add character to characters map
-						insertCharacter(characters, c);
+					// add character to characters map
+					insertCharacter(characters, c);
 				}
 			} else {
 				if(c >= '0' && c <= '9') {
