@@ -5,33 +5,42 @@
 using namespace std;
 
 void insertCharacter(map<char,int> &characters, char character) {
-	characters.insert({character, 1});
-	// add to characters map if not in vector
-	//if() {
-		
-	//} else {
-		// if character already exists in vector
-	//}
+// 	cout << "Character: " << character << endl;
+	map<char,int>::iterator itr;
+	itr = characters.find(character);
+	if(itr == characters.end()) {
+		// add to characters map if not in vector
+		characters.insert({character, 1});
+	} else {
+		// if character already exists in vector, update frequency
+		itr->second = (itr->second + 1);
+	}
 }
 
 void insertNumber(map<string,int> &numbers, string number) {
-	numbers.insert({number, 1});
-	// add to numbers vector if not in vector
-	//if() {
-		
-	//} else {
-		// if number already exists in vector
-	//}
+// 	cout << "Number: " << number << endl;
+	map<string,int>::iterator itr;
+	itr = numbers.find(number);
+	if(itr == numbers.end()) {
+		// add to characters map if not in vector
+		numbers.insert({number, 1});
+	} else {
+		// if character already exists in vector, update frequency
+		itr->second = (itr->second + 1);
+	}
 }
 
 void insertWord(map<string,int> &words, string word) {
-	words.insert({word, 1});
-	// add to word vector if isn't in vector
-	//if(words.find(word) == words.end()) {
-		
-	//} else {
-		// if word already exists in vector
-	//}
+// 	cout << "Word: " << word << endl;
+	map<string,int>::iterator itr;
+	itr = words.find(word);
+	if(itr == words.end()) {
+		// add to characters map if not in vector
+		words.insert({word, 1});
+	} else {
+		// if character already exists in vector, update frequency
+		itr->second = (itr->second + 1);
+	}
 }
 
 int main() {
@@ -95,7 +104,6 @@ int main() {
 
 							// add character to characters map
 							insertCharacter(characters, c);
-
 							word.push_back(c);
 						} else if (lower >= 'a' && lower <= 'z') {
 							// character is a letter
@@ -109,8 +117,16 @@ int main() {
 
 							// add character to characters map
 							insertCharacter(characters, c);
-
 							word.push_back(lower);
+						} else {
+							if(prevChar >= 'a' && prevChar <= 'z') {
+								// add word to words map
+								insertWord(words, word);
+								word.clear();
+							} else if (prevChar >= '0' && prevChar <= '9') {
+								insertNumber(numbers, word);
+								word.clear();
+							}
 						}
 					}
 				}
@@ -135,11 +151,16 @@ int main() {
 				cout << "Sorting input. Please wait." << endl;
 			}
 		}
-		// 
-// 		cout << "word: " << word << endl;
+		
+		// add last word
+		if(prevChar >= '0' && prevChar <= '9') {
+			insertNumber(numbers, word);
+		} else if (prevChar >= 'a' && prevChar <= 'z') {
+			insertWord(words, word);
+		}
 	}
 	
-	cout << "Characters" << endl;
+	cout << endl << "Characters" << endl;
 	for(auto result : characters) {
 		cout << result.first << ": " << result.second << endl;
 	}
