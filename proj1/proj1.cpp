@@ -102,8 +102,6 @@ int main() {
 								insertWord(words, word);
 							}
 
-							// add character to characters map
-							insertCharacter(characters, c);
 							word.push_back(c);
 						} else if (lower >= 'a' && lower <= 'z') {
 							// character is a letter
@@ -114,8 +112,6 @@ int main() {
 								insertNumber(numbers, word);
 							}
 
-							// add character to characters map
-							insertCharacter(characters, c);
 							word.push_back(lower);
 						} else {
 							// character is not alphanumeric
@@ -127,6 +123,8 @@ int main() {
 							}
 						}
 					}
+						// add character to characters map
+						insertCharacter(characters, c);
 				}
 			} else {
 				if(c >= '0' && c <= '9') {
@@ -160,19 +158,19 @@ int main() {
 	
 	cout << endl << "Characters" << endl;
 	for(auto result : characters) {
-		cout << result.first << ": " << result.second << endl;
+		cout << result.first << " => " << result.second << endl;
 	}
 	cout << endl;
 	
 	cout << "Numbers" << endl;
 	for(auto result : numbers) {
-		cout << result.first << ": " << result.second << endl;
+		cout << result.first << " => " << result.second << endl;
 	}
 	cout << endl;
 	
 	cout << "Words" << endl;
 	for(auto result : words) {
-		cout << result.first << ": " << result.second << endl;
+		cout << result.first << " => " << result.second << endl;
 	}
 	cout << endl;
 	
