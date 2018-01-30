@@ -17,7 +17,7 @@ void insertCharacter(map<char,int> &characters, char character) {
 	}
 }
 
-void insertNumber(map<string,int> &numbers, string number) {
+void insertNumber(map<string,int> &numbers, string &number) {
 // 	cout << "Number: " << number << endl;
 	map<string,int>::iterator itr;
 	itr = numbers.find(number);
@@ -28,9 +28,10 @@ void insertNumber(map<string,int> &numbers, string number) {
 		// if character already exists in vector, update frequency
 		itr->second = (itr->second + 1);
 	}
+	number.clear();
 }
 
-void insertWord(map<string,int> &words, string word) {
+void insertWord(map<string,int> &words, string &word) {
 // 	cout << "Word: " << word << endl;
 	map<string,int>::iterator itr;
 	itr = words.find(word);
@@ -41,6 +42,7 @@ void insertWord(map<string,int> &words, string word) {
 		// if character already exists in vector, update frequency
 		itr->second = (itr->second + 1);
 	}
+	word.clear();
 }
 
 int main() {
@@ -57,9 +59,10 @@ int main() {
 	while(getline(cin,input)) {
 		// get character from input unless no characters left to retrieve
 		for (char c : input) {
+			// store character in lowercase for comparisons
 			char lower = tolower(c);
 			
-			// check if theres a previous character
+			// check if this is the first character
 			if(prevChar != '\0') {
 				// check if character is a digit or letter
 				if(c >= '0' && c <= '9') {
@@ -67,10 +70,8 @@ int main() {
 					
 					// check if previous character was not digit
 					if(prevChar >= 'a' && prevChar <= 'z') {
-						
 						// put word in words map
 						insertWord(words, word);
-						word.clear();
 					}
 					
 					// add character to characters map
@@ -83,7 +84,6 @@ int main() {
 					if(prevChar >= '0' && prevChar <= '9') {
 						// put number in numbers map
 						insertNumber(numbers, word);
-						word.clear();
 					}
 					
 					// add character to character map
@@ -92,6 +92,7 @@ int main() {
 				} else {
 					// non-digit and non-letter character
 					if((prevChar >= '0' && prevChar <= '9')||(prevChar >= 'a' && prevChar <= 'z')) {
+						// character is alphanumeric
 						if(c >= '0' && c <= '9') {
 							// character is a digit
 
@@ -99,7 +100,6 @@ int main() {
 							if(prevChar >= 'a' && prevChar <= 'z') {
 								// add word to words map
 								insertWord(words, word);
-								word.clear();
 							}
 
 							// add character to characters map
@@ -112,20 +112,18 @@ int main() {
 							if(prevChar >= '0' && prevChar <= '9') {
 								// put number in numbers map
 								insertNumber(numbers, word);
-								word.clear();
 							}
 
 							// add character to characters map
 							insertCharacter(characters, c);
 							word.push_back(lower);
 						} else {
+							// character is not alphanumeric
 							if(prevChar >= 'a' && prevChar <= 'z') {
 								// add word to words map
 								insertWord(words, word);
-								word.clear();
 							} else if (prevChar >= '0' && prevChar <= '9') {
 								insertNumber(numbers, word);
-								word.clear();
 							}
 						}
 					}
