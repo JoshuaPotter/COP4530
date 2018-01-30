@@ -129,7 +129,9 @@ int main() {
 						}
 					}
 					// add character to characters map
-					insertCharacter(characters, c);
+					if (c >= ' ') {
+						insertCharacter(characters, c);
+					}
 				}
 			} else {
 				if(c >= '0' && c <= '9') {
@@ -148,9 +150,9 @@ int main() {
 			charNum++;
 			prevChar = lower;
 			
-			if(charNum % 150000 == 0) {
-				cout << "Sorting input. Please wait." << endl;
-			}
+// 			if(charNum % 150000 == 0) {
+// 				cout << "Sorting input. Please wait." << endl;
+// 			}
 		}
 		
 		// add last word
@@ -161,23 +163,31 @@ int main() {
 		}
 	}
 	
-	cout << endl << "Characters" << endl;
-	for(auto result : characters) {
-		cout << result.first << " => " << result.second << endl;
+	if (characters.size() > 0) {
+		cout << "Characters" << endl;
+		characters.erase('\n');
+		for(auto result : characters) {
+			cout << "'" << result.first << "' => " << result.second << endl;
+		}
+		cout << endl;
 	}
-	cout << endl;
 	
-	cout << "Numbers" << endl;
-	for(auto result : numbers) {
-		cout << result.first << " => " << result.second << endl;
+	if (numbers.size() > 0) {
+		cout << "Numbers" << endl;
+		numbers.erase("");
+		for(auto result : numbers) {
+			cout << result.first << " => " << result.second << endl;
+		}
+		cout << endl;
 	}
-	cout << endl;
 	
-	cout << "Words" << endl;
-	for(auto result : words) {
-		cout << result.first << " => " << result.second << endl;
+	if (words.size() > 0) {
+		cout << "Words" << endl;
+		words.erase("");
+		for(auto result : words) {
+			cout << result.first << " => " << result.second << endl;
+		}
 	}
-	cout << endl;
 	
 	return 0;
 }
