@@ -1,33 +1,51 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
+// function declarations
 void insertCharacter(map<char,int> &characters, char character);
-
 void insertNumber(map<string,int> &numbers, string &number);
-
 void insertWord(map<string,int> &words, string &word);
 
+// main function
 int main() {
 	char prevChar = '\0';
-// 	int charNum = 1;
 	string input;
 	string word;
+	// initial map to track elements and their frequency
 	map<string,int> words;
 	map<string,int> numbers;
 	map<char,int> characters;
+	// vector pairs for sorting elements by frequency
+	vector<pair<char,int>> sortedCharacters;
+	vector<pair<string,int>> sortedNumbers;
+	vector<pair<string,int>> sortedWords;
+	// sort characters comparator
+	struct character {
+		bool operator() (pair<char,int> i, pair<char,int> j) { 
+			return (i.second>j.second); 
+		}
+	} characterComparison;
+	// sort string (words and numbers) comparator
+	struct phrase {
+		bool operator() (pair<string,int> i, pair<string,int> j) { 
+			return (i.second>j.second); 
+		}
+	} stringComparison;
 	
-	// get user input
+	// get input line by line
 	while(getline(cin,input)) {
-		cout << "Input line: " << input << endl;
-		// get character from input unless no characters left to retrieve
+		// iterate through characters in the line
 		for (char c : input) {
 			// store character in lowercase for comparisons
 			char lower = tolower(c);
 			
-			// check if this is the first character
+			// if this is the first character in line, skip comparisons
+			// 		and add to word temporary
 			if(prevChar != '\0') {
 				// check if character is a digit or letter or symbol
 				if(c >= '0' && c <= '9') {
@@ -38,7 +56,8 @@ int main() {
 						// put word in words map
 						insertWord(words, word);
 					}
-					// add letter to temporary word storage
+					
+					// add character to word temporary
 					word.push_back(c);
 				} 
 				else if (lower >= 'a' && lower <= 'z') {
@@ -49,7 +68,8 @@ int main() {
 						// put number in numbers map
 						insertNumber(numbers, word);
 					}
-					// add letter to temporary word storage
+					
+					// add character to word temporary
 					word.push_back(lower);
 				} 
 				else {
@@ -64,7 +84,8 @@ int main() {
 								// add word to words map
 								insertWord(words, word);
 							}
-
+							
+							// add character to word temporary
 							word.push_back(c);
 						} else if (lower >= 'a' && lower <= 'z') {
 							// character is a letter
@@ -75,6 +96,7 @@ int main() {
 								insertNumber(numbers, word);
 							}
 
+							// add character to word temporary
 							word.push_back(lower);
 						} else {
 							// character is not alphanumeric
@@ -90,23 +112,18 @@ int main() {
 				}
 			} else {
 				if(c >= '0' && c <= '9') {
-					// push to word stack
+					// add character to word temporary
 					word.push_back(c);
 				} else if (lower >= 'a' && lower <= 'z') {
-					// push to word stack
+					// add character to word temporary
 					word.push_back(lower);
 				}
 			}
 			// add to characters map
 			insertCharacter(characters, c);
 			
-			// iterate character count
-// 			++charNum;
+			// set checked character as previous character
 			prevChar = lower;
-			
-// 			if(charNum % 150000 == 0) {
-// 				cout << "Sorting input. Please wait." << endl;
-// 			}
 		}
 			
 		// add newline since getline discards \n
@@ -120,103 +137,117 @@ int main() {
 		} else if (prevChar >= 'a' && prevChar <= 'z') {
 			insertWord(words, word);
 		}
-		
-		// iterate line
-		++lineNum;
 	}
+	
+	// sort characters based on frequency into vector
+	for(auto itr = characters.begin(); itr != characters.end(); ++itr) {
+		sortedCharacters.push_back(*itr);
+	}
+	sort(sortedCharacters.begin(), sortedCharacters.end(), characterComparison);
 	
 	// print characters
-	if (characters.size() > 0) {
-		cout << "Total " << characters.size() << " characters:" << endl;
-		for(auto result : characters) {
-			// format escaped characters
-			if (result.first == '\\') {
-				cout << "'\\' => " << result.second << endl;
-			} else if (result.first == '\'') {
-				cout << "'\'' => " << result.second << endl;
-			} else if (result.first == '\"') {
-				cout << "'\"' => " << result.second << endl;
-			} else if (result.first == '\t') {
-				cout << "'\\t' => " << result.second << endl;
-			} else if (result.first == '\v') {
-				cout << "'\\v' => " << result.second << endl;
-			} else if (result.first == '\r') {
-				cout << "'\\r' => " << result.second << endl;
-			} else if (result.first == '\n') {
-				cout << "'\\n' => " << result.second << endl;
-			} else if (result.first == '\0') {
-				cout << "'\\0' => " << result.second << endl;
-			}	else {
-				cout << "'" << result.first << "' => " << result.second << endl;
-			}
+	cout << endl << "Total " << characters.size() << " characters:" << endl;
+	for(auto result : sortedCharacters) {
+		// format escaped characters
+		if (result.first == '\\') {
+			cout << "'\\' => " << result.second << endl;
+		} else if (result.first == '\'') {
+			cout << "'\'' => " << result.second << endl;
+		} else if (result.first == '\"') {
+			cout << "'\"' => " << result.second << endl;
+		} else if (result.first == '\t') {
+			cout << "'\\t' => " << result.second << endl;
+		} else if (result.first == '\v') {
+			cout << "'\\v' => " << result.second << endl;
+		} else if (result.first == '\r') {
+			cout << "'\\r' => " << result.second << endl;
+		} else if (result.first == '\n') {
+			cout << "'\\n' => " << result.second << endl;
+		} else if (result.first == '\0') {
+			cout << "'\\0' => " << result.second << endl;
+		}	else {
+			cout << "'" << result.first << "' => " << result.second << endl;
 		}
-		cout << endl;
 	}
+	cout << endl;
+	
+	// sort numbers based on frequency into vector and erase empty keys
+	numbers.erase("");
+	for(auto itr = numbers.begin(); itr != numbers.end(); ++itr) {
+		sortedNumbers.push_back(*itr);
+	}
+	sort(sortedNumbers.begin(), sortedNumbers.end(), stringComparison);
 	
 	// print numbers
-	if (numbers.size() > 0) {
-		numbers.erase("");
-		cout << "Total " << numbers.size() << " numbers:" << endl;
-// 		cout << "Debug: " << int(numbers.begin()->first[0]) << " => " << numbers.begin()->second << endl;
-		for(auto result : numbers) {
-			cout << result.first << " => " << result.second << endl;
-		}
-		cout << endl;
+	cout << "Total " << numbers.size() << " numbers:" << endl;
+	for(auto result : sortedNumbers) {
+		cout << result.first << " => " << result.second << endl;
 	}
+	cout << endl;
+	
+	// sort words based on frequency into vector and erase empty keys
+	words.erase("");
+	for(auto itr = words.begin(); itr != words.end(); ++itr) {
+		sortedWords.push_back(*itr);
+	}
+	sort(sortedWords.begin(), sortedWords.end(), stringComparison);
 	
 	// print words
-	if (words.size() > 0) {
-		words.erase("");
-		cout << "Total " << words.size() << " words:" << endl;
-// 		cout << "Debug: " << int(words.begin()->first[0]) << " => " << words.begin()->second << endl;
-		for(auto result : words) {
-			cout << result.first << " => " << result.second << endl;
-		}
+	cout << "Total " << words.size() << " words:" << endl;
+	for(auto result : sortedWords) {
+		cout << result.first << " => " << result.second << endl;
 	}
 	
 	return 0;
 }
 
+// function definition
 void insertCharacter(map<char,int> &characters, char character) {
 	// insert character to characters map
 	
 	map<char,int>::iterator itr;
 	itr = characters.find(character);
 	if(itr == characters.end()) {
-		// add to characters map if not in map
+		// add to characters map if word not found in map
 		characters.insert({character, 1});
 	} else {
-		// if character already exists in map, update frequency
+		// if character already exists in map, iterate frequency
 		itr->second = (itr->second + 1);
 	}
 }
 
+// function definition
 void insertNumber(map<string,int> &numbers, string &number) {
 	// insert number to numbers map
 	
 	map<string,int>::iterator itr;
 	itr = numbers.find(number);
 	if(itr == numbers.end()) {
-		// add to number map if not in map
+		// add to number map if word not found in map
 		numbers.insert({number, 1});
 	} else {
-		// if number already exists in map, update frequency
+		// if number already exists in map, iterate frequency
 		itr->second = (itr->second + 1);
 	}
+	
+	// reset temporary for new number string
 	number.clear();
 }
 
+// function definition
 void insertWord(map<string,int> &words, string &word) {
 	// insert word to words map
 	
 	map<string,int>::iterator itr;
 	itr = words.find(word);
 	if(itr == words.end()) {
-		// add to words map if not in map
+		// add to words map if word not found in map
 		words.insert({word, 1});
 	} else {
-		// if word already exists in map, update frequency
+		// if word already exists in map, iterate frequency
 		itr->second = (itr->second + 1);
 	}
+	
+	// reset temporary for new word string
 	word.clear();
 }
