@@ -12,7 +12,7 @@ void insertWord(map<string,int> &words, string &word);
 
 int main() {
 	char prevChar = '\0';
-	int charNum = 1;
+// 	int charNum = 1;
 	string input;
 	string word;
 	map<string,int> words;
@@ -21,8 +21,8 @@ int main() {
 	
 	// get user input
 	while(getline(cin,input)) {
+		cout << "Input line: " << input << endl;
 		// get character from input unless no characters left to retrieve
-		// add to characters map
 		for (char c : input) {
 			// store character in lowercase for comparisons
 			char lower = tolower(c);
@@ -100,15 +100,20 @@ int main() {
 			// add to characters map
 			insertCharacter(characters, c);
 			
-			// iterate number of character
-			++charNum;
+			// iterate character count
+// 			++charNum;
 			prevChar = lower;
 			
 // 			if(charNum % 150000 == 0) {
 // 				cout << "Sorting input. Please wait." << endl;
 // 			}
 		}
-		
+			
+		// add newline since getline discards \n
+		if (!cin.eof()) {
+			insertCharacter(characters, '\n');
+		}
+
 		// add last word
 		if(prevChar >= '0' && prevChar <= '9') {
 			insertNumber(numbers, word);
@@ -116,10 +121,8 @@ int main() {
 			insertWord(words, word);
 		}
 		
-		// add newline
-		if(cin.peek() != EOF) {
-			insertCharacter(characters, '\n');
-		}
+		// iterate line
+		++lineNum;
 	}
 	
 	// print characters
