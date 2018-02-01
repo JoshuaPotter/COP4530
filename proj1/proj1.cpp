@@ -13,7 +13,6 @@ void insertNumber(map<string,int> &numbers, string &number);
 void insertWord(map<string,int> &words, string &word);
 bool sortCharASCII(pair<char,int> i, pair<char,int> j);
 bool sortCharFrequency(pair<char,int> i, pair<char,int> j);
-bool sortNumbers(pair<string,int> i, pair<string,int> j);
 bool sortStringFrequency(pair<string,int> i, pair<string,int> j);
 
 // main function
@@ -146,12 +145,11 @@ int main() {
 	for(auto itr = numbers.begin(); itr != numbers.end(); ++itr) {
 		sortedNumbers.push_back(*itr);
 	}
-	sort(sortedNumbers.begin(), sortedNumbers.end(), sortNumbers);
 	sort(sortedNumbers.begin(), sortedNumbers.end(), sortStringFrequency);
 	
 	// sort words based on frequency into vector and erase empty keys
 	words.erase("");
-	for(map<string,int>::reverse_iterator itr = words.rbegin(); itr != words.rend(); ++itr) {
+	for(auto itr = words.begin(); itr != words.end(); ++itr) {
 		sortedWords.push_back(*itr);
 	}
 	sort(sortedWords.begin(), sortedWords.end(), sortStringFrequency);
@@ -307,13 +305,6 @@ bool sortCharASCII(pair<char,int> i, pair<char,int> j) {
 // function defintion
 bool sortCharFrequency(pair<char,int> i, pair<char,int> j) {
 	return (i.second>j.second); 
-}
-
-// function definition
-bool sortNumbers(pair<string,int> i, pair<string,int> j) { 
-	int iNum = stoi(i.first);
-	int jNum = stoi(j.first);
-	return (iNum<jNum); 
 }
 
 // function definition
