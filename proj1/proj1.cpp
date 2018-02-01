@@ -11,7 +11,6 @@ using namespace std;
 void insertCharacter(map<char,int> &characters, char character);
 void insertNumber(map<string,int> &numbers, string &number);
 void insertWord(map<string,int> &words, string &word);
-bool sortCharASCII(pair<char,int> i, pair<char,int> j);
 bool sortCharFrequency(pair<char,int> i, pair<char,int> j);
 bool sortStringFrequency(pair<string,int> i, pair<string,int> j);
 
@@ -137,7 +136,6 @@ int main() {
 	for(auto itr = characters.begin(); itr != characters.end(); ++itr) {
 		sortedCharacters.push_back(*itr);
 	}
-	sort(sortedCharacters.begin(), sortedCharacters.end(), sortCharASCII);
 	sort(sortedCharacters.begin(), sortedCharacters.end(), sortCharFrequency);
 	
 	// sort numbers based on frequency into vector and erase empty keys
@@ -298,13 +296,18 @@ void insertWord(map<string,int> &words, string &word) {
 }
 
 // function defintion
-bool sortCharASCII(pair<char,int> i, pair<char,int> j) {
-	return (int(i.first)>int(j.first)); 
-}
-
-// function defintion
 bool sortCharFrequency(pair<char,int> i, pair<char,int> j) {
-	return (i.second>j.second); 
+	if(i.second>j.second) {
+		return true;
+	} else if (i.second==j.second) { 
+		if(i.first<j.first) {
+			return true;
+		} else {
+			return false;
+		}
+	}else {
+		return false;
+	}
 }
 
 // function definition
