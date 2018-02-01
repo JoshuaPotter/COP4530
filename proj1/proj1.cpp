@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <map>
 #include <vector>
@@ -14,15 +15,19 @@ void insertWord(map<string,int> &words, string &word);
 // main function
 int main() {
 	char prevChar = '\0';
+	unsigned int maxElementWidth = 0;
+	int maxPrint;
+	int counter = 0;
 	string input;
 	string word;
+	// maps for storing elements and frequency
 	map<string,int> words;
 	map<string,int> numbers;
 	map<char,int> characters;
 	// vector pairs for sorting elements by frequency
-	vector<pair<char,int>> sortedCharacters;
-	vector<pair<string,int>> sortedNumbers;
 	vector<pair<string,int>> sortedWords;
+	vector<pair<string,int>> sortedNumbers;
+	vector<pair<char,int>> sortedCharacters;
 	// sort characters comparator
 	struct character {
 		bool operator() (pair<char,int> i, pair<char,int> j) { 
@@ -42,7 +47,6 @@ int main() {
 		for (char c : input) {
 			// store character in lowercase for comparisons
 			char lower = tolower(c);
-			
 			// if this is the first character in line, skip comparisons
 			// 		and add to word temporary
 			if(prevChar != '\0') {
@@ -158,9 +162,28 @@ int main() {
 	}
 	sort(sortedWords.begin(), sortedWords.end(), stringComparison);
 	
+	// check for largest character width of top ten words
+	for(auto result : sortedWords) {
+		if(counter < 10) {
+			if(result.first.length() > maxElementWidth) {
+				maxElementWidth = result.first.length();
+			}
+		}
+		++counter;
+	}
+	counter = 0;
+	for(auto result : sortedNumbers) {
+		if(counter < 10) {
+			if(result.first.length() > maxElementWidth) {
+				maxElementWidth = result.first.length();
+			}
+		}
+		++counter;
+	}
+	counter=0;
+	maxElementWidth = maxElementWidth + 5;
+	
 	// print characters
-	int maxPrint;
-	int counter = 0;
 	if(characters.size() > 10) {
 		maxPrint = 10;
 	} else {
@@ -171,23 +194,23 @@ int main() {
 		if(counter < 10) {
 			// format escaped characters
 			if (result.first == '\\') {
-				cout << "No. " << counter << ": " << "\\ \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\\ \t " << result.second << endl;
 			} else if (result.first == '\'') {
-				cout << "No. " << counter << ": " << "\' \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\'" << result.second << endl;
 			} else if (result.first == '\"') {
-				cout << "No. " << counter << ": " << "\" \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\"" << result.second << endl;
 			} else if (result.first == '\t') {
-				cout << "No. " << counter << ": " << "\\t \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\\t" << result.second << endl;
 			} else if (result.first == '\v') {
-				cout << "No. " << counter << ": " << "\\v \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\\v" << result.second << endl;
 			} else if (result.first == '\r') {
-				cout << "No. " << counter << ": " << "\\r \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\\r" << result.second << endl;
 			} else if (result.first == '\n') {
-				cout << "No. " << counter << ": " << "\\n \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\\n" << result.second << endl;
 			} else if (result.first == '\0') {
-				cout << "No. " << counter << ": " << "\\0 \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << "\\0" << result.second << endl;
 			}	else {
-				cout << "No. " << counter << ": " << "" << result.first << " \t " << result.second << endl;
+				cout << "No. " << counter << ": " << setw(maxElementWidth) << left << result.first << result.second << endl;
 			}
 		}
 		++counter;
@@ -205,7 +228,7 @@ int main() {
 	cout << "Total " << words.size() << " different words, " << maxPrint << " most used numbers:" << endl;
 	for(auto result : sortedWords) {
 		if(counter < 10) {
-			cout << "No. " << counter << ": " << result.first << " \t " << result.second << endl;
+			cout << "No. " << counter << ": " << setw(maxElementWidth) << left << result.first << result.second << endl;
 		}
 		++counter;
 	}
@@ -223,7 +246,7 @@ int main() {
 	cout << "Total " << numbers.size() << " different numbers, " << maxPrint << " most used numbers:" << endl;
 	for(auto result : sortedNumbers) {
 		if(counter < 10) {
-			cout << "No. " << counter << ": " << result.first << " \t " << result.second << endl;
+			cout << "No. " << counter << ": " << setw(maxElementWidth) << left << result.first << result.second << endl;
 		}
 		++counter;
 	}	
