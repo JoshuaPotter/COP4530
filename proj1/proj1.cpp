@@ -16,7 +16,6 @@ int main() {
 	char prevChar = '\0';
 	string input;
 	string word;
-	// initial map to track elements and their frequency
 	map<string,int> words;
 	map<string,int> numbers;
 	map<char,int> characters;
@@ -145,45 +144,12 @@ int main() {
 	}
 	sort(sortedCharacters.begin(), sortedCharacters.end(), characterComparison);
 	
-	// print characters
-	cout << endl << "Total " << characters.size() << " characters:" << endl;
-	for(auto result : sortedCharacters) {
-		// format escaped characters
-		if (result.first == '\\') {
-			cout << "'\\' => " << result.second << endl;
-		} else if (result.first == '\'') {
-			cout << "'\'' => " << result.second << endl;
-		} else if (result.first == '\"') {
-			cout << "'\"' => " << result.second << endl;
-		} else if (result.first == '\t') {
-			cout << "'\\t' => " << result.second << endl;
-		} else if (result.first == '\v') {
-			cout << "'\\v' => " << result.second << endl;
-		} else if (result.first == '\r') {
-			cout << "'\\r' => " << result.second << endl;
-		} else if (result.first == '\n') {
-			cout << "'\\n' => " << result.second << endl;
-		} else if (result.first == '\0') {
-			cout << "'\\0' => " << result.second << endl;
-		}	else {
-			cout << "'" << result.first << "' => " << result.second << endl;
-		}
-	}
-	cout << endl;
-	
 	// sort numbers based on frequency into vector and erase empty keys
 	numbers.erase("");
 	for(auto itr = numbers.begin(); itr != numbers.end(); ++itr) {
 		sortedNumbers.push_back(*itr);
 	}
 	sort(sortedNumbers.begin(), sortedNumbers.end(), stringComparison);
-	
-	// print numbers
-	cout << "Total " << numbers.size() << " numbers:" << endl;
-	for(auto result : sortedNumbers) {
-		cout << result.first << " => " << result.second << endl;
-	}
-	cout << endl;
 	
 	// sort words based on frequency into vector and erase empty keys
 	words.erase("");
@@ -192,11 +158,75 @@ int main() {
 	}
 	sort(sortedWords.begin(), sortedWords.end(), stringComparison);
 	
-	// print words
-	cout << "Total " << words.size() << " words:" << endl;
-	for(auto result : sortedWords) {
-		cout << result.first << " => " << result.second << endl;
+	// print characters
+	int maxPrint;
+	int counter = 0;
+	if(characters.size() > 10) {
+		maxPrint = 10;
+	} else {
+		maxPrint = characters.size();
 	}
+	cout << "Total " << characters.size() << " different characters, " << maxPrint << " most used characters:" << endl;
+	for(auto result : sortedCharacters) {
+		if(counter < 10) {
+			// format escaped characters
+			if (result.first == '\\') {
+				cout << "No. " << counter << ": " << "\\ \t " << result.second << endl;
+			} else if (result.first == '\'') {
+				cout << "No. " << counter << ": " << "\' \t " << result.second << endl;
+			} else if (result.first == '\"') {
+				cout << "No. " << counter << ": " << "\" \t " << result.second << endl;
+			} else if (result.first == '\t') {
+				cout << "No. " << counter << ": " << "\\t \t " << result.second << endl;
+			} else if (result.first == '\v') {
+				cout << "No. " << counter << ": " << "\\v \t " << result.second << endl;
+			} else if (result.first == '\r') {
+				cout << "No. " << counter << ": " << "\\r \t " << result.second << endl;
+			} else if (result.first == '\n') {
+				cout << "No. " << counter << ": " << "\\n \t " << result.second << endl;
+			} else if (result.first == '\0') {
+				cout << "No. " << counter << ": " << "\\0 \t " << result.second << endl;
+			}	else {
+				cout << "No. " << counter << ": " << "" << result.first << " \t " << result.second << endl;
+			}
+		}
+		++counter;
+	}
+	counter = 0;
+	cout << endl;
+	
+	// find out max size, otherwise set to 10
+	if(words.size() > 10) {
+		maxPrint = 10;
+	} else {
+		maxPrint = words.size();
+	}
+	// print words
+	cout << "Total " << words.size() << " different words, " << maxPrint << " most used numbers:" << endl;
+	for(auto result : sortedWords) {
+		if(counter < 10) {
+			cout << "No. " << counter << ": " << result.first << " \t " << result.second << endl;
+		}
+		++counter;
+	}
+	// reset counter
+	counter = 0;
+	cout << endl;
+	
+	// find out max size, otherwise set to 10
+	if(numbers.size() > 10) {
+		maxPrint = 10;
+	} else {
+		maxPrint = numbers.size();
+	}
+	// print numbers
+	cout << "Total " << numbers.size() << " different numbers, " << maxPrint << " most used numbers:" << endl;
+	for(auto result : sortedNumbers) {
+		if(counter < 10) {
+			cout << "No. " << counter << ": " << result.first << " \t " << result.second << endl;
+		}
+		++counter;
+	}	
 	
 	return 0;
 }
