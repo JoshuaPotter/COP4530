@@ -6,7 +6,7 @@ CXXFLAGS=-std=c++11 -Wall -pedantic
 .PHONY : clean
 
 clean:
-	rm -f *.o *.x core.*
+	rm -f proj2.x
   
 proj2.x: List.h test_list.cpp
 	$(CXX) $(CXXFLAGS) -o $@ test_list.cpp

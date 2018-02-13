@@ -27,6 +27,7 @@ const T & List<T>::const_iterator::operator*() const {
 template <typename T>
 typename List<T>::const_iterator & List<T>::const_iterator::operator++() { 
   current = current->next;
+  
   return *this;
 }
 
@@ -35,6 +36,7 @@ template <typename T>
 typename List<T>::const_iterator List<T>::const_iterator::operator++(int) { 
   List<T>::const_iterator old = *this;
   ++(*this);
+  
   return old;
 }
 
@@ -42,6 +44,7 @@ typename List<T>::const_iterator List<T>::const_iterator::operator++(int) {
 template <typename T>
 typename List<T>::const_iterator & List<T>::const_iterator::operator--() { 
   current = current->prev;
+  
   return *this;
 }
 
@@ -50,6 +53,7 @@ template <typename T>
 typename List<T>::const_iterator List<T>::const_iterator::operator--(int) { 
   List<T>::const_iterator old = *this;
   --(*this);
+  
   return old;
 }
 
@@ -101,6 +105,7 @@ const T & List<T>::iterator::operator*() const {
 template <typename T>
 typename List<T>::iterator & List<T>::iterator::operator++() {
   this->current = this->current->next;
+  
   return *this;
 }
 
@@ -109,6 +114,7 @@ template <typename T>
 typename List<T>::iterator List<T>::iterator::operator++(int) {
   List<T>::iterator old = *this;
   ++(*this);
+  
   return old;
 }
 
@@ -116,6 +122,7 @@ typename List<T>::iterator List<T>::iterator::operator++(int) {
 template <typename T>
 typename List<T>::iterator & List<T>::iterator::operator--() {
   this->current = this->current->prev;
+  
   return *this;
 }
 
@@ -124,6 +131,7 @@ template <typename T>
 typename List<T>::iterator List<T>::iterator::operator--(int) {
   List<T>::iterator old = *this;
   --(*this);
+  
   return old;
 }
 
@@ -174,8 +182,8 @@ template <typename T>
 List<T>::List(List<T>::const_iterator start, List<T>::const_iterator end) {
   init();
   while (start != end) {
-    start++;
     push_back(start.current->data);
+    ++start;
   }
 }
 
@@ -192,6 +200,7 @@ template <typename T>
 const List<T>& List<T>::List::operator=(const List<T> &rhs) {
   List<T> copy = rhs;
   std::swap(*this, copy);
+  
   return *this;
 }
 
@@ -226,10 +235,10 @@ void List<T>::clear() {
 }
 
 // reverse the order of the elements
-// template <typename T>
-// void List<T>::remove(const T &val) {
+template <typename T>
+void List<T>::reverse() {
   
-// }
+}
 
 // reference to the first element
 template <typename T>
@@ -301,11 +310,14 @@ void List<T>::remove(const T &val) {
   }
 }
 
-// remove all elements with value = val
-// template <typename T>
-// void List<T>::print(std::ostream& os, char ofc = ' ') const {
-  
-// } 
+// print out all elements. ofc is deliminitor
+template <typename T>
+void List<T>::print(std::ostream& os, char ofc) const {
+  for(typename List<T>::const_iterator i = begin(); i != end(); ++i) {
+    os << i.current->data;
+    os << ofc;
+  }
+} 
 
 // iterator to first element
 template <typename T>
@@ -336,6 +348,7 @@ template <typename T>
 typename List<T>::iterator List<T>::insert(List<T>::iterator itr, const T& val) {
   Node *p = itr.current;
   theSize++;
+  
   return { p->prev = p->prev->next = new Node{ val, p->prev, p } };
 }
 
@@ -344,6 +357,7 @@ template <typename T>
 typename List<T>::iterator List<T>::insert(List<T>::iterator itr, T && val) {
   Node *p = itr.current;
   theSize++;
+  
   return { p->prev = p->prev->next = new Node{ std::move(val), p->prev, p } };
 }
 
@@ -363,9 +377,10 @@ typename List<T>::iterator List<T>::erase(List<T>::iterator itr) {
 // erase one element
 template <typename T>
 typename List<T>::iterator List<T>::erase(List<T>::iterator start, List<T>::iterator end) {
-  for(List<T>::iterator i = start; i != end;) {
+  for(List<T>::iterator i = start; i != end) {
     i = erase(i);
   }
+  
   return end;
 }
 
@@ -383,8 +398,8 @@ void List<T>::init() {
 template <typename T>
 bool operator==(const List<T> & lhs, const List<T> &rhs) {
   if(lhs.size() == rhs.size()) {
-    for(auto i = lhs.begin(); i != lhs.end(); ++i) {
-      for (auto j = rhs.begin(); i != rhs.end(); ++i) {
+    for(typename List<T>::const_iterator i = lhs.begin(); i != lhs.end(); ++i) {
+      for (typename List<T>::const_iterator j = rhs.begin(); j != rhs.end(); ++j) {
         if(*i != *j) {
           return false;
         }
@@ -404,4 +419,11 @@ bool operator!=(const List<T> & lhs, const List<T> &rhs) {
   } else {
     return true;
   }
+}
+
+// overload output operator
+template <typename T>
+std::ostream & operator<<(std::ostream &os, const List<T> &l) {
+  l.print(os);
+  return os;
 }
