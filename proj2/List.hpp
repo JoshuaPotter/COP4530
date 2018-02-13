@@ -55,13 +55,13 @@ typename List<T>::const_iterator List<T>::const_iterator::operator--(int) {
 
 // equals to comparison operator overload
 template <typename T>
-bool List<T>::const_iterator::operator==(const List<T>::const_iterator & rhs) const { 
+bool List<T>::const_iterator::operator==(const List<T>::const_iterator &rhs) const { 
   return current == rhs.current;
 }
 
 // not equals to comparison operator overload
 template <typename T>
-bool List<T>::const_iterator::operator!=(const List<T>::const_iterator & rhs) const { 
+bool List<T>::const_iterator::operator!=(const List<T>::const_iterator &rhs) const { 
   return !(*this == rhs);
 }
 
@@ -226,7 +226,10 @@ void List<T>::clear() {
 }
 
 // reverse the order of the elements
-
+// template <typename T>
+// void List<T>::remove(const T &val) {
+  
+// }
 
 // reference to the first element
 template <typename T>
@@ -288,6 +291,84 @@ void List<T>::pop_back() {
   erase(--end()); 
 }
 
+// remove all elements with value = val
+template <typename T>
+void List<T>::remove(const T &val) {
+  for(List<T>::iterator i = begin(); i != end(); ++i) {
+    if(i.current->data == val) {
+      erase(i);
+    }
+  }
+}
+
+// remove all elements with value = val
+// template <typename T>
+// void List<T>::print(std::ostream& os, char ofc = ' ') const {
+  
+// } 
+
+// iterator to first element
+template <typename T>
+typename List<T>::iterator List<T>::begin() {
+  return { head->next };
+}
+
+// iterator to first element
+template <typename T>
+typename List<T>::const_iterator List<T>::begin() const {
+  return { head->next };
+}
+
+// end marker iterator
+template <typename T>
+typename List<T>::iterator List<T>::end() {
+  return { tail };
+}
+
+// end marker iterator
+template <typename T>
+typename List<T>::const_iterator List<T>::end() const {
+  return { tail };
+}
+
+// insert val ahead of itr
+template <typename T>
+typename List<T>::iterator List<T>::insert(List<T>::iterator itr, const T& val) {
+  Node *p = itr.current;
+  theSize++;
+  return { p->prev = p->prev->next = new Node{ val, p->prev, p } };
+}
+
+// move version of insert
+template <typename T>
+typename List<T>::iterator List<T>::insert(List<T>::iterator itr, T && val) {
+  Node *p = itr.current;
+  theSize++;
+  return { p->prev = p->prev->next = new Node{ std::move(val), p->prev, p } };
+}
+
+// erase one element
+template <typename T>
+typename List<T>::iterator List<T>::erase(List<T>::iterator itr) {
+  Node *p = itr.current;
+  iterator retVal{ p->next };
+  p->prev->next = p->next;
+  p->next->prev = p->prev;
+  delete p;
+  theSize--;
+  
+  return retVal;
+}
+
+// erase one element
+template <typename T>
+typename List<T>::iterator List<T>::erase(List<T>::iterator start, List<T>::iterator end) {
+  for(List<T>::iterator i = start; i != end;) {
+    i = erase(i);
+  }
+  return end;
+}
+
 // create new node in list
 template <typename T>
 void List<T>::init() {
@@ -296,4 +377,31 @@ void List<T>::init() {
   tail = new Node;
   head->next = tail;
   tail->prev = head;
+}
+
+// overload comparison operator
+template <typename T>
+bool operator==(const List<T> & lhs, const List<T> &rhs) {
+  if(lhs.size() == rhs.size()) {
+    for(auto i = lhs.begin(); i != lhs.end(); ++i) {
+      for (auto j = rhs.begin(); i != rhs.end(); ++i) {
+        if(*i != *j) {
+          return false;
+        }
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// overload not comparison operator
+template <typename T>
+bool operator!=(const List<T> & lhs, const List<T> &rhs) {
+  if(lhs == rhs) {
+    return false;
+  } else {
+    return true;
+  }
 }
