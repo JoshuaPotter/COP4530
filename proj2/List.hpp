@@ -35,7 +35,7 @@ typename List<T>::const_iterator & List<T>::const_iterator::operator++() {
 template <typename T>
 typename List<T>::const_iterator List<T>::const_iterator::operator++(int) { 
   List<T>::const_iterator old = *this;
-  ++(*this);
+  ++*this;
   
   return old;
 }
@@ -113,7 +113,7 @@ typename List<T>::iterator & List<T>::iterator::operator++() {
 template <typename T>
 typename List<T>::iterator List<T>::iterator::operator++(int) {
   List<T>::iterator old = *this;
-  ++(*this);
+  ++*this;
   
   return old;
 }
@@ -130,7 +130,7 @@ typename List<T>::iterator & List<T>::iterator::operator--() {
 template <typename T>
 typename List<T>::iterator List<T>::iterator::operator--(int) {
   List<T>::iterator old = *this;
-  --(*this);
+  --*this;
   
   return old;
 }
@@ -141,7 +141,7 @@ List<T>::iterator::iterator(Node *p) : List<T>::const_iterator::const_iterator {
 
 /*
   
-  List class definitions
+  List class member function definitions
   
 */
 
@@ -237,7 +237,21 @@ void List<T>::clear() {
 // reverse the order of the elements
 template <typename T>
 void List<T>::reverse() {
-  
+  // not empty and not last element
+  if(!empty() && head != nullptr) {
+    Node *p = head;
+    while(p != NULL) {
+      Node *temp = p->next;
+      p->next = p->prev;
+      p->prev = temp;
+      
+      if(temp == nullptr) {
+        tail = head;
+        head = p;
+      }
+      p = temp;
+    }
+  }
 }
 
 // reference to the first element
@@ -368,8 +382,8 @@ typename List<T>::iterator List<T>::erase(List<T>::iterator itr) {
   iterator retVal{ p->next };
   p->prev->next = p->next;
   p->next->prev = p->prev;
-  delete p;
   theSize--;
+  delete p;
   
   return retVal;
 }
@@ -377,7 +391,7 @@ typename List<T>::iterator List<T>::erase(List<T>::iterator itr) {
 // erase one element
 template <typename T>
 typename List<T>::iterator List<T>::erase(List<T>::iterator start, List<T>::iterator end) {
-  for(List<T>::iterator i = start; i != end) {
+  for(List<T>::iterator i = start; i != end;) {
     i = erase(i);
   }
   

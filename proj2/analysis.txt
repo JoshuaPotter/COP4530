@@ -1,0 +1,27 @@
+Name: Joshua Potter (jop13)
+Class: COP4530
+Assignment 2 - List.hpp
+
+Complexity of reverse() function:
+
+Code: 
+void List<T>::reverse() {
+  // not empty and not last element
+  if(!empty() && head != nullptr) {
+    Node *p = head;
+    while(p != NULL) {
+      Node *temp = p->next;
+      p->next = p->prev;
+      p->prev = temp;
+      
+      if(temp == nullptr) {
+        tail = head;
+        head = p;
+      }
+      p = temp;
+    }
+  }
+}
+
+Analysis:
+In terms of Big-O notation, this function could be described in O(N) format. There are 2 if-statements and 1 for-loop. There are many single line executions, too. Big-O notation always assumes the upper limit, therefore assuming the function performs a maximum number of iterations, N. If this occurs, the performance return on the for-loop will quickly eclipse that of the if-statements, therefore making the performance return on the if-statements and single line code executions negligble in comparison. In other words, there is no point calculating the performance cost of single line code executions and if statements because the for-loop will run so many times that it will cost more performance-wise than the other lines of code, if we assume the for-loop runs N-times.

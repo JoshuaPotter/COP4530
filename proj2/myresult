@@ -19,7 +19,7 @@ size 4
 1 2 3 4 
 reverse list
 size 4
-1 2 3 4 
+4 3 2 1 
 clearing list
 all cleared
 testing other constructors
@@ -51,7 +51,7 @@ size 5
 1 00 000 0000 00000 
 reverse list
 size 5
-1 00 000 0000 00000 
+00000 0000 000 00 1 
 clearing list
 all cleared
 testing other constructors
