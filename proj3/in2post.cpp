@@ -19,32 +19,20 @@ int main() {
   while(flag) {
     cout << "Enter infix expression (\"exit\" to quit): ";
     
-    while(cin.get(character) && flag) {
-      // read character and add to expression string while there are characters
-      //   unless expression says "exit"
-      if(expression == "exit") {
-        cout << "Flag: " << "Exiting inner loop" << endl;
-        flag = false;
-        break;
-      } else if (character == '\n') {
-        cout << "Flag: " << "Found newline" << endl;
-        flag = false;
-        break;
-      } else {
-        expression = expression + character;
-        cout << "Flag: " << "Char: " << character << endl;
-        cout << "Flag: " << "Exp: " << expression << endl;
-        flag = true;
-      }
+    while(cin.get(character) && character != '\n') {
+      // read character and add to expression string while not newline
+      expression = expression + character;
+//       cout << "Flag: " << "Char: " << character << endl;
+//       cout << "Flag: " << "Exp: " << expression << endl;
     }
     
-    if(expression == "exit") {
-      flag = false;
-      cout << "Flag: " << "Exiting outer loop" << endl;
-    } else {
-      flag = true;
-      cout << "Flag: " << "Run outer loop again" << endl;
+    // if expression isn't exit, empty expression for next loop
+    //    otherwise exit the loop
+    if(expression != "exit") {
+//       cout << "Flag: " << "Run outer loop again" << endl;
       expression = "";
+    } else {
+      flag = false;
     }
   }
   
