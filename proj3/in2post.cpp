@@ -21,16 +21,15 @@ bool validExpression(int whitespace, vector<string> expression);
 void evaluateExpression(vector<string> postfixExpression);
 
 int main() {
-  bool flag = true; // ask user for another expression if true
-  bool errorFlag = false;
   char character = '\0';
-//   char prevCharacter = '\0';
+  bool flag = true; // ask user for another expression if true
+	int whitespace = 0; // counts spaces in user input
 	string originalExpression = ""; // stores expression
   string expression = ""; // stores expression for manipulation
 	string variable = ""; // for variable character storing
+	vector<string> postfixExpression; // contains formatted postfix expression after manipulations
   Stack<char> symbols; // for symbol organization within expression
-	vector<string> postfixExpression;
-	int whitespace = 0;
+	
   symbols.push('\0'); // head element
   
   while(flag) {
@@ -48,10 +47,12 @@ int main() {
         symbols.push(character);
 				
       } else if (character == ' ') {
+				
         // character is whitespace, store any variable created
 				expression = expression + variable + " ";
 				variable = "";
 				++whitespace;
+				
       } else if(operandFlag(string(1, character))) {
 				
         // character is operand, build a variable
@@ -72,7 +73,7 @@ int main() {
           symbols.pop();
 					
         }
-				
+
       } else {
 				
         // character is operator
@@ -82,14 +83,8 @@ int main() {
 				
 				symbols.push(character);
 				
-      }
-      
-// 			prevCharacter = character;
-    }
-		
-		// clear cin buffer if there is an error
-    if(errorFlag && character != '\n') {
-      cin.ignore(10000, '\n');
+			}
+			
     }
 		
 		// store any left over variable
@@ -102,7 +97,7 @@ int main() {
 
 		// if no errors and the expression isn't empty,
 		//    move string expression to vector
-    if(!errorFlag && !expression.empty()) {
+    if(!expression.empty()) {
 			istringstream iss(expression);
 			string temp;
 			while(iss >> temp) {
@@ -138,7 +133,6 @@ int main() {
       expression = "";
       originalExpression = "";
 			postfixExpression.clear();
-      errorFlag = false;
       character = '\0';
 //       prevCharacter = '\0';
 			variable = "";
