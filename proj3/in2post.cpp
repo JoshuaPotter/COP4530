@@ -5,6 +5,7 @@
 */
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include "stack.h"
 
@@ -12,109 +13,135 @@ using namespace std;
 using namespace cop4530;
 
 void stackToExpression(Stack<char> &symbols, string &expression);
-int precedence(char c);
-bool operandFlag(char c);
-bool operatorFlag(char c);
+int precedence(string s);
+bool operandFlag(string s);
+bool operatorFlag(string s);
+bool foundDoubleSpace(char l, char r);
+bool validExpression(int whitespace, vector<string> expression);
+void evaluateExpression(vector<string> postfixExpression);
 
 int main() {
   bool flag = true; // ask user for another expression if true
   bool errorFlag = false;
   char character = '\0';
-  char prevCharacter = '\0';
-  string expression;
-  Stack<char> symbols;
+//   char prevCharacter = '\0';
+	string originalExpression = ""; // stores expression
+  string expression = ""; // stores expression for manipulation
+	string variable = ""; // for variable character storing
+  Stack<char> symbols; // for symbol organization within expression
+	vector<string> postfixExpression;
+	int whitespace = 0;
   symbols.push('\0'); // head element
   
   while(flag) {
     cout << "Enter infix expression (\"exit\" to quit): ";
     
-    while(cin.get(character) && character != '\n' && !errorFlag) {
-//       cout << character << endl;
+    while(cin.get(character) && character != '\n') {
+			
+			// keep copy of user input
+			originalExpression = originalExpression + character;
+			
       // read character and add to expression string while not newline      
       if (character == '(') {
+				
         // character is open parentheses
         symbols.push(character);
+				
       } else if (character == ' ') {
-        // character is whitespace
-        
-      } else if(operandFlag(character)) {
-        // character is operand
-        if (prevCharacter != '\0') {
-          if (operandFlag(prevCharacter) && prevCharacter != ' ') {
-            // previous character was an operand also, we are missing an operator
-            cout << "Error: Missing operators in the expression" << endl;
-            errorFlag = true;
-          } else {
-            expression = expression + character;
-          }
-        } else {
-          expression = expression + character;
-        }
+        // character is whitespace, store any variable created
+				expression = expression + variable + " ";
+				variable = "";
+				++whitespace;
+      } else if(operandFlag(string(1, character))) {
+				
+        // character is operand, build a variable
+				variable = variable + character;
+				
       } else if (character == ')') {
+				
         // character is closing parentheses
         while(symbols.top() != '~' && symbols.top() != '(') {
+					
           // add everything inside parentheses to stack
           stackToExpression(symbols, expression);
+					
         }
         
         if(symbols.top() == '(') {
+					
           symbols.pop();
+					
         }
+				
       } else {
+				
         // character is operator
-        if (prevCharacter != '\0') {
-          if (operatorFlag(prevCharacter) && prevCharacter != ' ') {
-            // previous character was an operator also, we are missing an operand
-            cout << "Error: Missing operands in the expression" << endl;
-            errorFlag = true;
-          } else {
-            while(symbols.top() != '\0' && (precedence(character) <= precedence(symbols.top()))) {
-              stackToExpression(symbols, expression);
-            }
-            symbols.push(character);
-          }
-        } else {
-          while(symbols.top() != '\0' && (precedence(character) <= precedence(symbols.top()))) {
-            stackToExpression(symbols, expression);
-          }
-          symbols.push(character);
-        }
+				while(symbols.top() != '\0' && (precedence(string(1, character)) <= precedence(string(1, symbols.top())))) {
+					stackToExpression(symbols, expression);
+				}
+				
+				symbols.push(character);
+				
       }
       
-      if(character != ' ') {
-        // do not store whitespace for comparison
-        prevCharacter = character;
-      }
+// 			prevCharacter = character;
     }
-    
+		
+		// clear cin buffer if there is an error
     if(errorFlag && character != '\n') {
-      // clear cin buffer if there is an error
       cin.ignore(10000, '\n');
     }
+		
+		// store any left over variable
+		expression = expression + variable + " ";
     
     // empty stack into expression after reading all characters
     while(symbols.top() != '\0') {
       stackToExpression(symbols, expression);
     }
 
-    if(!errorFlag) { 
-      cout << "Postfix expression: ";
-      for(char &c : expression) {
-        if (c != '\n') {
-          cout << c << " ";
-        }
-      }
-      cout << endl;
+		// if no errors and the expression isn't empty,
+		//    move string expression to vector
+    if(!errorFlag && !expression.empty()) {
+			istringstream iss(expression);
+			string temp;
+			while(iss >> temp) {
+				postfixExpression.push_back(temp);
+				if(whitespace > 0) {
+					postfixExpression.push_back(" ");
+				}
+			}
+			if(whitespace > 0) {
+				postfixExpression.pop_back();
+			}
     }
     
-    // if expression isn't "exit", empty expression for next loop
+    // if expression isn't "exit", print expression, flush variables, repeat loop
     //    otherwise exit the loop
-    if(expression != "exit") {
+    if(originalExpression != "exit") {
+			// print
+			if(validExpression(whitespace, postfixExpression)) {
+				cout << "Postfix expression: ";
+				for(auto &s : postfixExpression) {
+					if (s != "\n" && s != " ") {
+						cout << s << " ";
+					}
+				}
+				cout << endl;
+				// evaluate
+// 				evaluateExpression(postfixExpression)
+			} else {
+				cout << "Postfix expression: " << originalExpression << endl;
+			}
+			
       // flush variables
       expression = "";
+      originalExpression = "";
+			postfixExpression.clear();
       errorFlag = false;
       character = '\0';
-      prevCharacter = '\0';
+//       prevCharacter = '\0';
+			variable = "";
     } else {
       flag = false;
     }
@@ -127,32 +154,121 @@ void stackToExpression(Stack<char> &symbols, string &expression) {
   // empty stack into expression
   char temp = symbols.top();
   symbols.pop();
-  expression = expression + temp;
+  expression = expression + temp + " ";
 }
 
-int precedence(char c) {
+int precedence(string c) {
   // return precedence of operator
-  if(c == '+' || c == '-') {
+  if(c == "+" || c == "-") {
     return 1;
-  } else if (c == '*' || c == '/') {
+  } else if (c == "*" || c == "/") {
     return 2;
   } else {
     return 0;
   }
 }
 
-bool operandFlag(char c) {
-  if((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+bool operandFlag(string c) {
+	if(c.length() == 1) {
+		if((c >= "0" && c <= "9") || (c >= "A" && c <= "Z") || (c >= "A" && c <= "Z")) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return true;
+	}
+}
+
+bool operatorFlag(string c) {
+  if(c == "+" || c == "-" || c == "*" || c == "/") {
     return true;
   } else {
     return false;
   }
 }
 
-bool operatorFlag(char c) {
-  if(c == '+' || c == '-' || c == '*' || c == '/') {
-    return true;
-  } else {
-    return false;
-  }
+
+bool foundDoubleSpace(char l, char r) { 
+	if((l == r) && (l == ' ')) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool validExpression(int whitespace, vector<string> expression) {
+	int spaces = 0;
+	int operators = 0;
+	int operands = 0;
+	int parentheses = 0;
+	
+	if(whitespace == 0) {
+		spaces = -1;
+	}
+	
+	for(string &s : expression) {
+// 			cout << s << endl;
+		if(s == " ") {
+			++spaces;
+		} else if (operandFlag(s)) {
+			++operands;
+		} else if (operatorFlag(s)) {
+			++operators;
+		} else if (s == "(" || s == ")" || s == "[" || s == "]") {
+			++parentheses;
+		}
+	}
+	
+	if(spaces != 0) {
+		if(!(spaces == (operators + operands + parentheses - 1))) {
+			return false;
+		}
+	} else {
+		return false;
+	}
+		 
+	if (!(parentheses%2 == 0)) {
+		cout << "Error: Mismatched parantheses" << endl;
+		return false;
+	}
+	
+	if(operands != 0) {
+		if(operators != 0) {
+			if(!(operands == (operators + 1))) {
+				cout << "Error: Missing operand" << endl;
+				return false;
+			}
+		} else {
+			cout << "Error: Missing operator" << endl;
+			return false;
+		}
+	} else {
+		cout << "Error: Missing operand" << endl;
+		return false;
+	}
+		
+	if(operators != 0) {
+		if (!(operators == (operands - 1))) {
+			cout << "Error: Missing operator" << endl;
+			return false;
+		}
+	} else {
+		cout << "Error: Missing operator" << endl;
+		return false;
+	}
+// 		if (operands == (2 * operators)) {
+// 			return true;
+// 		} else {
+// 			cout << "Error: Missing operand" << endl;
+// 			return false;
+// 		}
+	
+// 	if (operators == (operands / 2)) {
+// 		return true;
+// 	} else {
+// 		cout << "Error: Missing operator" << endl;
+// 		return false;
+// 	}
+	return true;
 }
