@@ -12,6 +12,11 @@
 using namespace std;
 using namespace cop4530;
 
+/*
+
+	Function Declarations
+
+*/
 void stackToExpression(Stack<char> &symbols, string &expression);
 int precedence(string s);
 bool operandFlag(string s);
@@ -61,7 +66,7 @@ int main() {
       } else if (character == ')') {
 				
         // character is closing parentheses
-        while(symbols.top() != '~' && symbols.top() != '(') {
+        while(symbols.top() != '\0' && symbols.top() != '(') {
 					
           // add everything inside parentheses to stack
           stackToExpression(symbols, expression);
@@ -70,6 +75,7 @@ int main() {
         
         if(symbols.top() == '(') {
 					
+					// pop the final parantheses
           symbols.pop();
 					
         }
@@ -86,6 +92,7 @@ int main() {
 			}
 			
     }
+		cout << endl;
 		
 		// store any left over variable
 		expression = expression + variable + " ";
@@ -94,8 +101,8 @@ int main() {
     while(symbols.top() != '\0') {
       stackToExpression(symbols, expression);
     }
-
-		// if no errors and the expression isn't empty,
+		
+		// if the expression isn't empty,
 		//    move string expression to vector
     if(!expression.empty()) {
 			istringstream iss(expression);
@@ -111,10 +118,11 @@ int main() {
 			}
     }
     
-    // if expression isn't "exit", print expression, flush variables, repeat loop
-    //    otherwise exit the loop
+    // if original user input isn't "exit", print expression, flush variables, repeat loop
+    //    otherwise exit loop
     if(originalExpression != "exit") {
-			// print
+			// print and evaluated if valid expression
+			//    otherwise print originalExpression (unmanipulated)
 			if(validExpression(whitespace, postfixExpression)) {
 				cout << "Postfix expression: ";
 				for(auto &s : postfixExpression) {
@@ -123,10 +131,11 @@ int main() {
 					}
 				}
 				cout << endl;
-				// evaluate
+				// evaluate the expression
 // 				evaluateExpression(postfixExpression)
 			} else {
 				cout << "Postfix expression: " << originalExpression << endl;
+				cout << "Postfix evaluation: " << originalExpression << endl;
 			}
 			
       // flush variables
@@ -134,7 +143,6 @@ int main() {
       originalExpression = "";
 			postfixExpression.clear();
       character = '\0';
-//       prevCharacter = '\0';
 			variable = "";
     } else {
       flag = false;
@@ -143,6 +151,12 @@ int main() {
   
 	return 0;
 }
+
+/* 
+
+Function Definitions 
+
+*/
 
 void stackToExpression(Stack<char> &symbols, string &expression) {
   // empty stack into expression
@@ -251,18 +265,6 @@ bool validExpression(int whitespace, vector<string> expression) {
 		cout << "Error: Missing operator" << endl;
 		return false;
 	}
-// 		if (operands == (2 * operators)) {
-// 			return true;
-// 		} else {
-// 			cout << "Error: Missing operand" << endl;
-// 			return false;
-// 		}
 	
-// 	if (operators == (operands / 2)) {
-// 		return true;
-// 	} else {
-// 		cout << "Error: Missing operator" << endl;
-// 		return false;
-// 	}
 	return true;
 }
