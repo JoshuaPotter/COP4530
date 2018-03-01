@@ -19,8 +19,8 @@ bool operatorFlag(char c);
 int main() {
   bool flag = true; // ask user for another expression if true
   bool errorFlag = false;
-  char character;
-  char prevCharacter;
+  char character = '\0';
+  char prevCharacter = '\0';
   string expression;
   Stack<char> symbols;
   symbols.push('\0'); // head element
@@ -29,16 +29,24 @@ int main() {
     cout << "Enter infix expression (\"exit\" to quit): ";
     
     while(cin.get(character) && character != '\n' && !errorFlag) {
+//       cout << character << endl;
       // read character and add to expression string while not newline      
       if (character == '(') {
         // character is open parentheses
         symbols.push(character);
-      }  else if(operandFlag(character)) {
+      } else if (character == ' ') {
+        // character is whitespace
+        
+      } else if(operandFlag(character)) {
         // character is operand
-        if(operandFlag(prevCharacter)) {
-          // previous character was an operand also, we are missing an operator
-          cout << "Error: Missing operators in the expression" << endl;
-          errorFlag = true;
+        if (prevCharacter != '\0') {
+          if (operandFlag(prevCharacter) && prevCharacter != ' ') {
+            // previous character was an operand also, we are missing an operator
+            cout << "Error: Missing operators in the expression" << endl;
+            errorFlag = true;
+          } else {
+            expression = expression + character;
+          }
         } else {
           expression = expression + character;
         }
@@ -52,15 +60,19 @@ int main() {
         if(symbols.top() == '(') {
           symbols.pop();
         }
-      } else if (character == ' ') {
-        // character is whitespace
-        
       } else {
         // character is operator
-        if(operatorFlag(prevCharacter)) {
-          // previous character was an operator also, we are missing an operand
-          cout << "Error: Missing operands in the expression" << endl;
-          errorFlag = true;
+        if (prevCharacter != '\0') {
+          if (operatorFlag(prevCharacter) && prevCharacter != ' ') {
+            // previous character was an operator also, we are missing an operand
+            cout << "Error: Missing operands in the expression" << endl;
+            errorFlag = true;
+          } else {
+            while(symbols.top() != '\0' && (precedence(character) <= precedence(symbols.top()))) {
+              stackToExpression(symbols, expression);
+            }
+            symbols.push(character);
+          }
         } else {
           while(symbols.top() != '\0' && (precedence(character) <= precedence(symbols.top()))) {
             stackToExpression(symbols, expression);
@@ -70,10 +82,16 @@ int main() {
       }
       
       if(character != ' ') {
+        // do not store whitespace for comparison
         prevCharacter = character;
       }
     }
-     
+    
+    if(errorFlag && character != '\n') {
+      // clear cin buffer if there is an error
+      cin.ignore(10000, '\n');
+    }
+    
     // empty stack into expression after reading all characters
     while(symbols.top() != '\0') {
       stackToExpression(symbols, expression);
@@ -82,7 +100,9 @@ int main() {
     if(!errorFlag) { 
       cout << "Postfix expression: ";
       for(char &c : expression) {
-        cout << c << " ";
+        if (c != '\n') {
+          cout << c << " ";
+        }
       }
       cout << endl;
     }
@@ -90,10 +110,11 @@ int main() {
     // if expression isn't "exit", empty expression for next loop
     //    otherwise exit the loop
     if(expression != "exit") {
+      // flush variables
       expression = "";
       errorFlag = false;
-      character = '\0'; // flush character
-      cin.ignore(10000, '\n'); // flush cin.get
+      character = '\0';
+      prevCharacter = '\0';
     } else {
       flag = false;
     }
