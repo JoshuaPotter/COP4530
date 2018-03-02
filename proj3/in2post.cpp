@@ -23,7 +23,7 @@ bool operandFlag(string s);
 bool operatorFlag(string s);
 bool foundDoubleSpace(char l, char r);
 bool validExpression(int whitespace, vector<string> expression);
-void evaluateExpression(vector<string> postfixExpression);
+float evaluateExpression(vector<string> expression);
 
 int main() {
   char character = '\0';
@@ -132,7 +132,7 @@ int main() {
 				}
 				cout << endl;
 				// evaluate the expression
-// 				evaluateExpression(postfixExpression)
+				cout << "Postfix evaluation: " << evaluateExpression(postfixExpression) << endl;
 			} else {
 				cout << "Postfix expression: " << originalExpression << endl;
 				cout << "Postfix evaluation: " << originalExpression << endl;
@@ -267,4 +267,38 @@ bool validExpression(int whitespace, vector<string> expression) {
 	}
 	
 	return true;
+}
+
+float evaluateExpression(vector<string> expression) {
+	Stack<string> operation;
+	
+	// loop through expression
+	for(vector<string>::iterator itr = expression.begin(); itr != expression.end(); ++itr) {
+// 		cout << *itr << endl;
+		if(*itr == " ") {
+			// ignore whitespace
+		} else if (operandFlag(*itr)) {
+			// push operands
+			operation.push(*itr);
+		} else {
+			// get operands
+			float rhs = stof(operation.top());
+			operation.pop();
+			float lhs = stof(operation.top());
+			operation.pop();
+			
+			// perform operation
+			if(*itr == "+") {
+				operation.push(to_string(lhs + rhs)); 
+			} else if (*itr == "-") {
+				operation.push(to_string(lhs - rhs)); 
+			} else if (*itr == "*") {
+				operation.push(to_string(lhs * rhs)); 
+			} else if (*itr == "/") {
+				operation.push(to_string(rhs / lhs));
+			}
+		}
+	}
+	
+	return stof(operation.top());
 }
