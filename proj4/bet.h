@@ -26,6 +26,8 @@ class BET {
     size_t size(); // call private version
     size_t leaf_nodes(); // call private version
     bool empty(); // return true if tree is empty
+    bool isOperator(const string & exp);
+    bool isOperand(const string & exp);
   
   private:
     struct BinaryNode {
