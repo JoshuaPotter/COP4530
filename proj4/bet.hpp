@@ -146,7 +146,7 @@ void BET::printInfixExpression(BinaryNode *n) {
     if(n->left != nullptr) {
       // left child exists
       if(isOperator(n->left->element)) {
-        // if left child is an operator, then print its related expression
+        // if left child is an operator, then print its subexpression
         cout << "( ";
         printInfixExpression(n->left);
         cout << ") ";
@@ -160,7 +160,7 @@ void BET::printInfixExpression(BinaryNode *n) {
       
       // right child exists
       if(isOperator(n->right->element)) {
-        // if right child is an operator, print its related expression
+        // if right child is an operator, print its subexpression
         cout << "( ";
         printInfixExpression(n->right);
         cout << ") ";
@@ -203,8 +203,8 @@ void BET::printPostfixExpression(BinaryNode *n) {
 }
 
 size_t BET::size(BinaryNode *t) {
+  // return size recursively or 0 if empty
   if(t != nullptr) {
-    // include root node
     return size(t->left) + size(t->right) + 1;
   } else {
     return 0;
