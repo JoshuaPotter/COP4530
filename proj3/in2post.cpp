@@ -134,8 +134,8 @@ int main() {
 				// evaluate the expression
 				cout << "Postfix evaluation: " << evaluateExpression(postfixExpression) << endl;
 			} else {
-				cout << "Postfix expression: " << originalExpression << endl;
-				cout << "Postfix evaluation: " << originalExpression << endl;
+				cout << "Postfix expression: " << expression << endl;
+				cout << "Postfix evaluation: " << expression << " = " << expression << endl;
 			}
 			
       // flush variables
@@ -215,8 +215,8 @@ bool validExpression(int whitespace, vector<string> expression) {
 		spaces = -1;
 	}
 	
+	// count elements of expression
 	for(string &s : expression) {
-// 			cout << s << endl;
 		if(s == " ") {
 			++spaces;
 		} else if (operandFlag(s)) {
@@ -228,6 +228,7 @@ bool validExpression(int whitespace, vector<string> expression) {
 		}
 	}
 	
+	// if incorrect number of spaces for expression
 	if(spaces != 0) {
 		if(!(spaces == (operators + operands + parentheses - 1))) {
 			return false;
@@ -236,11 +237,13 @@ bool validExpression(int whitespace, vector<string> expression) {
 		return false;
 	}
 		 
+	// if incorrect number of parantheses
 	if (!(parentheses%2 == 0)) {
 		cout << "Error: Mismatched parantheses" << endl;
 		return false;
 	}
 	
+	// if incorrect number of operands
 	if(operands != 0) {
 		if(operators != 0) {
 			if(!(operands == (operators + 1))) {
@@ -256,6 +259,7 @@ bool validExpression(int whitespace, vector<string> expression) {
 		return false;
 	}
 		
+	// if incorrect number of operators
 	if(operators != 0) {
 		if (!(operators == (operands - 1))) {
 			cout << "Error: Missing operator" << endl;
