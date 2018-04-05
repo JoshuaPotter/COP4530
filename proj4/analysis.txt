@@ -1,0 +1,5 @@
+Name: Joshua Potter (jop13)
+Class: COP4530
+Assignment 4 - analysis.txt
+
+The complexity of BET::makeEmpty(BinaryNode* & t), in terms of Big-O Notation, is O(2^N). The function calls itself, recursively, twice each time it runs, with N being the maximum number of nodes the function needs to traverse between returning back up the function call stack.

@@ -33,7 +33,7 @@ BET::~BET() {
 bool BET::buildFromPostfix(const string postfix) {
   istringstream iss(postfix);
   stack<BinaryNode*> s;
-  string token;
+  string character;
   
   // if tree from root is not empty, make empty
   if(!empty()) {
@@ -41,15 +41,15 @@ bool BET::buildFromPostfix(const string postfix) {
   }
   
   // traverse expression word by word
-  while(iss >> token) {
+  while(iss >> character) {
     BinaryNode *t1, *t2;
-    BinaryNode *n = new BinaryNode(token, nullptr, nullptr);
+    BinaryNode *n = new BinaryNode(character, nullptr, nullptr);
     
-    if(isOperand(token)) {
-      // token is an operand, push it to the stack 
+    if(isOperand(character)) {
+      // character is an operand, push it to the stack 
       s.push(n);
-    } else if(isOperator(token)) {
-      // token is an operator
+    } else if(isOperator(character)) {
+      // character is an operator
       
       // if we don't have 2 operands, then input is invalid
       if(s.size() < 2) {
@@ -65,7 +65,7 @@ bool BET::buildFromPostfix(const string postfix) {
       t2 = s.top();
       s.pop();
       
-      // set the children to operands from stack
+      // set the chilkd pointers to operands from stack
       n->right = t1;
       n->left = t2;
       
@@ -121,7 +121,11 @@ size_t BET::leaf_nodes() {
 
 // return true if tree is empty
 bool BET::empty() {
-  return (root == nullptr);
+  if(root == nullptr) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 // checks if string parameter is one of specified operators
@@ -147,30 +151,33 @@ void BET::printInfixExpression(BinaryNode *n) {
   // check if node element is operator or operand
   if(isOperator(n->element)) {
     // if operator, check for related expression, otherwise print operator
-    if(n->left != nullptr) {
+    auto rightChild = n->right;
+    auto leftChild = n->left;
+    
+    if(leftChild != nullptr) {
       // left child exists
-      if(isOperator(n->left->element)) {
+      if(isOperator(leftChild->element)) {
         // if left child is an operator, then print its subexpression
         cout << "( ";
-        printInfixExpression(n->left);
+        printInfixExpression(leftChild);
         cout << ") ";
-      } else if (isOperand(n->left->element)) {
+      } else if (isOperand(leftChild->element)) {
         // if left child is operand, print its expression
-        printInfixExpression(n->left);
+        printInfixExpression(leftChild);
       }
       
       // print operator
       cout << n->element << " ";
       
       // right child exists
-      if(isOperator(n->right->element)) {
+      if(isOperator(rightChild->element)) {
         // if right child is an operator, print its subexpression
         cout << "( ";
-        printInfixExpression(n->right);
+        printInfixExpression(rightChild);
         cout << ") ";
-      } else if (isOperand(n->right->element)) {
+      } else if (isOperand(rightChild->element)) {
         // if right child is operand, print its expression
-        printInfixExpression(n->right);
+        printInfixExpression(rightChild);
       }
     }
   } else if (isOperand(n->element)) {
@@ -180,7 +187,7 @@ void BET::printInfixExpression(BinaryNode *n) {
 }
 
 void BET::makeEmpty(BinaryNode* &t) {
-  // empty children, then delete node
+  // empty the children nodes, then delete node
   if(t != nullptr) {
     makeEmpty(t->left);
     makeEmpty(t->right);
@@ -209,7 +216,9 @@ void BET::printPostfixExpression(BinaryNode *n) {
 size_t BET::size(BinaryNode *t) {
   // return size recursively or 0 if empty
   if(t != nullptr) {
-    return size(t->left) + size(t->right) + 1;
+    // include root node in size
+    int treeSize = size(t->left) + size(t->right) + 1;
+    return treeSize;
   } else {
     return 0;
   }
@@ -220,6 +229,7 @@ size_t BET::leaf_nodes(BinaryNode *t) {
     // if left and right children are nullptr, we have reached leaf node
     return 1;
   } else {
-    return leaf_nodes(t->left) + leaf_nodes(t->right);
+    int leafSize = leaf_nodes(t->left) + leaf_nodes(t->right);
+    return leafSize;
   }
 }
