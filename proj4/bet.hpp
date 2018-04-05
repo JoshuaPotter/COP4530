@@ -54,12 +54,14 @@ bool BET::buildFromPostfix(const string postfix) {
       // if we don't have 2 operands, then input is invalid
       if(s.size() < 2) {
         cout << "Wrong postfix expression" << endl;
+        
         return false;
       }
       
       // get 2 operands from stack
       t1 = s.top();
       s.pop();
+      
       t2 = s.top();
       s.pop();
       
@@ -75,6 +77,7 @@ bool BET::buildFromPostfix(const string postfix) {
   // if we don't have one operator left, then input is invalid
   if(s.size() != 1) {
     cout << "Wrong postfix expression" << endl;
+    
     return false;
   }
 
@@ -90,6 +93,7 @@ bool BET::buildFromPostfix(const string postfix) {
 const BET & BET::operator= (const BET & bet) {
   // clone a tree based on its root node and return the clone
   root = bet.clone(bet.root);
+  
   return *this;
 }
 
