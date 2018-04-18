@@ -32,6 +32,8 @@ bool HashTable<K, V>::contains(const K & k) {
 	} else {
 		return false;
 	}
+
+	//return find_if(begin(whichList), end(whichList), [](std::pair<K, V> element) { return element.first == k; });
 }
 
 template <typename K, typename V>
@@ -50,6 +52,18 @@ bool HashTable<K, V>::match(const std::pair<K, V> &kv) const {
 	} else {
 		return false;
 	}
+	
+// 	return find_if(begin(whichList), end(whichList), [](std::pair<K, V> element) { 
+// 		if(element.first == kv.first) { 
+// 			if(element.second == kv.second) {
+// 				return true;
+// 			} else {
+// 				return false;
+// 			}
+// 		} else {
+// 			return false;
+// 		}
+// 	}) != end(whichList);
 }
 
 template <typename K, typename V>
@@ -154,7 +168,19 @@ void HashTable<K, V>::load(const char *filename) {
 
 template <typename K, typename V>
 void HashTable<K, V>::dump() {
-	
+	int vectorIndex = 0;
+	int listIndex = 0;
+	for(auto & v : theLists) {
+		std::cout << "v[" << vectorIndex << "]: ";
+		for(auto & l : v) {
+			if(listIndex > 1) {
+				std::cout << ":";
+			}
+			std::cout << l.first << " " << l.second;
+			++listIndex;
+		}
+		std::cout << std::endl;
+	}
 }
 
 template <typename K, typename V>
