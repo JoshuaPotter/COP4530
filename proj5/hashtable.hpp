@@ -20,24 +20,91 @@ HashTable<K, V>::~HashTable() {
 
 template <typename K, typename V>
 bool HashTable<K, V>::contains(const K & k) {
-	auto & whichList = theLists[myhash(x)];
-	return find(begin(whichList), end(whichList), x) != end(whichList);
+	auto & whichList = theLists[myhash(k)];
+	
+	if(whichList.size() > 0) {
+		for(auto & element : whichList) {
+			if(element.first == k) {
+				return true;
+			}
+		}
+		return false;
+	} else {
+		return false;
+	}
 }
 
 template <typename K, typename V>
 bool HashTable<K, V>::match(const std::pair<K, V> &kv) const {
+	auto & whichList = theLists[myhash(kv.first)];
 	
+	if(whichList.size() > 0) {
+		for(auto & element : whichList) {
+			if(element.first == kv.first) {
+				if(element.second == kv.second) {
+					return false;
+				}
+			}
+		}
+		return false;
+	} else {
+		return false;
+	}
+}
+
+template <typename K, typename V>
+bool HashTable<K, V>::insert(std::pair<K, V> & kv) {
+	auto & whichList = theLists[myhash(kv.first)];
+	
+	if(whichList.size() > 0) {
+		for(auto & element : whichList) {
+			if(element.first == kv.first) {
+				if(element.second == kv.second) {
+					return false;
+				} else {
+					element.second = kv.second;
+					break;
+				}
+			} else {
+				whichList.push_back(kv);
+				break;
+			}
+		}
+	} else {
+		whichList.push_back(kv);
+	}
+	
+	// rehash if we iterate out of bounds
+	if(++currentSize > theLists.size()) {
+		rehash();
+	}
+	
+	return true;
 }
 
 template <typename K, typename V>
 bool HashTable<K, V>::insert(std::pair<K,  V> && kv) {
-	auto & whichList = theLists[myhash(x)];
-	if(find(begin(whichList), end(whichList), x) != end(whichList)) {
-		return false;
-	}
-	whishList.push_back(x);
+	auto & whichList = theLists[myhash(kv.first)];
 	
-	// rehash
+	if(whichList.size() > 0) {
+		for(auto & element : whichList) {
+			if(element.first == kv.first) {
+				if(element.second == kv.second) {
+					return false;
+				} else {
+					std::swap(element.second, kv.second);
+					break;
+				}
+			} else {
+				whichList.push_back(kv);
+				break;
+			}
+		}
+	} else {
+		whichList.push_back(kv);
+	}
+	
+	// rehash if we iterate out of bounds
 	if(++currentSize > theLists.size()) {
 		rehash();
 	}
@@ -47,8 +114,8 @@ bool HashTable<K, V>::insert(std::pair<K,  V> && kv) {
 
 template <typename K, typename V>
 bool HashTable<K, V>::remove(const K & k) {
-	auto & whichList = theLists[myhash(x)];
-	auto itr = find(begin(whichList), end(whichList), x);
+	auto & whichList = theLists[myhash(k)];
+	auto itr = find_if(begin(whichList), end(whichList), [](std::pair<K, V> element) { return element.first == k; });
 	
 	if(itr == end(whichList)) {
 		return false;
@@ -66,7 +133,23 @@ void HashTable<K, V>::clear() {
 
 template <typename K, typename V>
 void HashTable<K, V>::load(const char *filename) {
+	std::ifstream file;
+	std::string data;
 	
+	file.open(filename);
+	while(std::getline(file, data)) {
+		std::string key;
+		std::string value;
+		std::istringstream iss(data);
+		
+		iss >> key >> value;
+		
+		std::pair<std::string, std::string> element = std::make_pair(key, value);
+		insert(element);
+	}
+	file.close();
+	
+	return true;
 }
 
 template <typename K, typename V>
