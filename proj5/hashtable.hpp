@@ -52,18 +52,6 @@ bool HashTable<K, V>::match(const std::pair<K, V> &kv) const {
 	} else {
 		return false;
 	}
-	
-// 	return find_if(begin(whichList), end(whichList), [](std::pair<K, V> element) { 
-// 		if(element.first == kv.first) { 
-// 			if(element.second == kv.second) {
-// 				return true;
-// 			} else {
-// 				return false;
-// 			}
-// 		} else {
-// 			return false;
-// 		}
-// 	}) != end(whichList);
 }
 
 template <typename K, typename V>
@@ -190,7 +178,17 @@ size_t HashTable<K, V>::size() {
 
 template <typename K, typename V>
 bool HashTable<K, V>::write_to_file(const char *filename) {
+	std::ofstream file;
 	
+	file.open(filename);
+	for(auto & v : theLists) {
+		for(auto & l : v) {
+			file << l.first << " " << l.second << std::endl;
+		}
+	}
+	file.close();
+	
+	return true;
 }
 
 template <typename K, typename V>
@@ -220,17 +218,7 @@ bool HashTable<K, V>::rehash() {
 }
 
 template <typename K, typename V>
-size_t HashTable<K, V>::myhash(const K &k) {
-//  book implementation
-	
-// 	size_t hashVal = 0;
-	
-// 	for(char ch : key) {
-// 		hashVal = 37 * hashVal + ch;
-// 	}
-	
-// 	return hashVal % theLists.size();
-	
+size_t HashTable<K, V>::myhash(const K &k) {	
 	static std::hash<K> hf;
 	return hf(x) % theLists.size();
 }
