@@ -7,6 +7,9 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 #include <iostream>
+#include <fstream>    // file stream
+#include <sstream>    // string stream for getline
+#include <string>
 #include <vector>
 #include <list>
 #include <function>   // std::hash
@@ -48,7 +51,7 @@ namespace cop4530 {
       // member data
       int currentSize;
       std::vector<std::list<std::pair<K,V>>> theLists; // vector list of KEY, VALUE pairs
-  }
+  };
   
   #include "hashtable.hpp"
 }
