@@ -5,18 +5,20 @@
 */
 
 #include "passserver.h"
+
 #include <crypt.h>
 #include <cstring>
 #include <unistd.h>
 
-using namespace std;
 using namespace cop4530;
+using namespace std;
 
-// pass size from PassServer to HashTable
-PassServer::PassServer(size_t size = 101) {
-  HashTable<string, string> ht(size);
+// constructor
+PassServer::PassServer(size_t size) : HashTable<string, string>(size) {
+  
 }
 
+// destructor
 PassServer::~PassServer() {
   
 }
@@ -43,7 +45,7 @@ bool PassServer::removeUser(const string & k) {
 
 // change existing user's password
 bool PassServer::changePassword(const pair<string, string> &p, const string & newpassword) {
-  
+//   return true;
 }
 
 // check if user exists
@@ -70,7 +72,7 @@ string PassServer::encrypt(const string & str) {
   char salt[] = "$1$########";
   char * password = new char [100];
   
-  strcpy ( password, crypt(key.c_str(), salt));
+  strcpy (password, crypt(str.c_str(), salt));
   string encryptedPassword = password;
   
   // return only last 22 characters
