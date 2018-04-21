@@ -45,7 +45,26 @@ bool PassServer::removeUser(const string & k) {
 
 // change existing user's password
 bool PassServer::changePassword(const pair<string, string> &p, const string & newpassword) {
-//   return true;
+  // check if user exists
+  if(find(p.first)) {
+    // if user exists, check for password
+    if(HashTable<string, string>::match( make_pair(p.first, encrypt(p.second)) )) {
+      // check if user exists with new password
+      if(HashTable<string, string>::match( make_pair(p.first, encrypt(newpassword)) )) {
+        // abort if match exists
+        return false;
+      } else {
+        // insert if match doesn't exist
+        return HashTable<string, string>::insert(make_pair(p.first, encrypt(newpassword)));
+      }
+    } else {
+      // user with password combination doesn't exist
+      return false;
+    }
+  } else {
+    // user doesn't exist
+    return false;
+  }
 }
 
 // check if user exists
@@ -63,7 +82,7 @@ size_t PassServer::size() {
   return HashTable<string, string>::size();
 }
 
-// save username nad password combo to file
+// save username and password combo to file
 bool PassServer::write_to_file(const char *filename) {
   return HashTable<string, string>::write_to_file(filename);
 }

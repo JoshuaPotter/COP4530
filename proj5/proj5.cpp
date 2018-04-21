@@ -22,7 +22,7 @@ void Menu();
 int main() {
 	bool showMenu = true;
 	size_t psSize;
-	char c;
+	char menuFunction;
 	
 	// get size of hashtable
 	cout << "Enter preferred hash table capacity: ";
@@ -32,18 +32,21 @@ int main() {
 	// initialize password server object with desired size
 	PassServer ps(psSize);
 	
+  // show menu and ask for character to corresponding function
   do {
 		Menu();
-		while(showMenu && cin.get(c)) {
-			switch(c) {
+		while(showMenu && cin.get(menuFunction)) {
+			switch(menuFunction) {
 				case 'l': {
 					string loadFile;
+          
 					cout << "Enter password file name to load from: ";
 					cin >> loadFile;
+          
 					if(!ps.load(loadFile.c_str())) {
-						cout << "Error: Cannot open file " << loadFile << endl << endl;
+						cout << endl << "Error: Cannot open file " << loadFile << endl;
 					}
-					Menu();
+          
 					break;
 				}
 				case 'a': {
@@ -56,11 +59,11 @@ int main() {
 					cin >> password;
 					
 					if(!ps.addUser(make_pair(username, password))) {
-						cout << "*****Error: User " << username << " could not be added." << endl << endl;
+						cout << endl << "*****Error: User " << username << " could not be added." << endl;
 					} else {
-						cout << "User " << username << " added." << endl << endl;
+						cout << endl << "User " << username << " added." << endl;
 					}
-					Menu();
+          
 					break;
 				}
 				case 'r': {
@@ -70,11 +73,11 @@ int main() {
 					cin >> username;
 					
 					if(!ps.removeUser(username)) {
-						cout << "*****Error: User " << username << " could not be removed." << endl << endl;
+						cout << endl << "*****Error: User not found. Could not delete user" << endl;
 					} else {
-						cout << "User " << username << " deleted." << endl << endl;
+						cout << endl << "User " << username << " deleted." << endl;
 					}
-					Menu();
+          
 					break;
 				}
 				case 'c': {
@@ -90,11 +93,11 @@ int main() {
 					cin >> newPassword;
 					
 					if(!ps.changePassword(make_pair(username, password), newPassword)) {
-						cout << "*****Error: Could not change user password" << endl << endl;
+						cout << endl << "*****Error: Could not change user password" << endl;
 					} else {
-						cout << "Password changed for user " << username << endl << endl;
+						cout << endl << "Password changed for user " << username << endl;
 					}
-					Menu();
+          
 					break;
 				}
 				case 'f': {
@@ -104,22 +107,22 @@ int main() {
 					cin >> username;
 					
 					if(!ps.find(username)) {
-						cout << "*****Error: User '" << username << "' not found." << endl << endl;
+						cout << endl << "User '" << username << "' not found." << endl;
 					} else {
-						cout << "User '" << username << "' found." << endl << endl;
+						cout << endl << "User '" << username << "' found." << endl;
 					}
-					Menu();
+          
 					break;
 				}
 				case 'd': {
 					ps.dump();
 					cout << endl;
-					Menu();
+          
 					break;
 				}
 				case 's': {
-					cout << "Size of hashtable: " << ps.size() << endl << endl;
-					Menu();
+					cout << endl << "Size of hashtable: " << ps.size() << endl;
+          
 					break;
 				}
 				case 'w': {
@@ -129,15 +132,19 @@ int main() {
 					cin >> writeFile;
 					
 					if(!ps.write_to_file(writeFile.c_str())) {
-						cout << "*****Error: Could not write to file " << writeFile << endl << endl;
+						cout << endl << "*****Error: Could not write to file " << writeFile << endl;
 					}
-					Menu();
+          
 					break;
 				}
 				case 'x': {
 					showMenu = false;
 					break;
 				}
+			}
+      
+			if(showMenu) {
+				Menu();
 			}
 		}
 	} while(showMenu);
